@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo Simon</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+    body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #282c34;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 20px; /* Borda arredondada */
+    padding: 20px;
+    background-color: #3a3f47; /* Cor de fundo do container */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra para profundidade */
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Colunas ocupando igual espaço */
+    gap: 15px; /* Sem espaço entre os botões */
+    margin: 0 auto; /* Centraliza o grid */
+    justify-items: center; /* Centraliza os itens no eixo horizontal */
+    align-items: center; /* Centraliza os itens no eixo vertical */
+    margin-bottom: 20px;
+}
+
+.button {
+    width: 60%; /* Botões ocupando toda a largura da coluna */
+    height: 100px;
+    border-radius: 20px; /* Borda arredondada nos botões */
+    opacity: 0.8;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.3s, transform 0.3s; /* Transição suave */
+}
+.button:hover {
+    opacity: 1;
+    transform: scale(1.1); /* Efeito de aumento ao passar o mouse */
+}
+
+.red {
+    position: relative;
+    left: 35px;
+    background-color: #e74c3c; /* Vermelho */
+}
+
+.blue {
+    position: relative;
+    right: 35px;
+    background-color: #3498db; /* Azul */
+}
+
+.green {
+    position: relative;
+    left: 35px;
+    background-color: #2ecc71; /* Verde */
+}
+
+.yellow {
+    position: relative;
+    right: 35px;
+    background-color: #f1c40f; /* Amarelo */
+}
+
+#start {
+    padding: 10px 20px;
+    background-color: #61dafb;
+    border: none;
+    border-radius: 10px; /* Borda arredondada */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Transição suave */
+}
+
+#start:hover {
+    background-color: #21a1f1;
+    transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+    #ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+/* Cabeçalho da tabela */
+#ranking-table thead {
+    background-color: #234b6e; /* Cor de fundo do cabeçalho */
+    color: white; /* Cor do texto do cabeçalho */
+    
+}
+
+/* Estilos para as células do cabeçalho */
+#ranking-table th {
+    padding: 15px;
+    text-align: left;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Estilos para as células do corpo da tabela */
+#ranking-table tbody tr {
+    color: black;
+    background-color: #f2f2f2; /* Cor de fundo das linhas */
+    transition: background-color 0.3s;
+}
+
+#ranking-table tbody tr:hover {
+    background-color: #ddd; /* Cor de fundo ao passar o mouse */
+}
+
+/* Estilo das células do corpo */
+#ranking-table td {
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+/* Estilo da tabela quando não há dados */
+#ranking-table tbody tr.empty-row {
+    background-color: transparent; /* Torna a linha vazia transparente */
+    height: 50px; /* Define a altura da linha vazia */
+    text-align: center; /* Centraliza o texto */
+}
+
+/* Estilo da tabela em dispositivos menores */
+@media (max-width: 600px) {
+    #ranking-table {
+        font-size: 14px; /* Ajusta o tamanho da fonte */
+    }
+}
+
+</style>
+<body>
+    <div class="container">
+        <h1>Simon</h1>
+        <h2 id="welcome-message"></h2>
+        <div class="buttons">
+            <div class="button red"></div>
+            <div class="button blue"></div>
+            <div class="button green"></div>
+            <div class="button yellow"></div>
+        </div>
+        <button id="start">Iniciar Jogo</button>
+        <h2 id="message"></h2>
+
+        <!-- Tabela de Ranking -->
+        <h2>Ranking dos Jogadores</h2>
+        <table id="ranking-table">
+            <thead>
+                <tr>
+                    <th>Jogador</th>
+                    <th>Pontuação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Ranking será preenchido aqui -->
+            </tbody>
+        </table>
+    </div>
+<script>
+        
+    const colors = ['red', 'blue', 'green', 'yellow'];
+    let sequence = [];
+    let userSequence = [];
+    let level = 0;
+    let gameStarted = false;
+
+    const startButton = document.getElementById('start');
+    const message = document.getElementById('message');
+
+    startButton.addEventListener('click', startGame);
+
+    function startGame() {
+        sequence = [];
+        userSequence = [];
+        level = 0;
+        gameStarted = true;
+        message.textContent = '';
+        nextLevel();
+    }
+
+    function nextLevel() {
+        userSequence = [];
+        level++;
+        message.textContent = `Nível ${level}`;
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        sequence.push(randomColor);
+        playSequence();
+    }
+
+    function playSequence() {
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index >= sequence.length) {
+                clearInterval(interval);
+                return;
+            }
+            const color = sequence[index];
+            flashButton(color);
+            index++;
+        }, 1000);
+    }
+
+    function flashButton(color) {
+        const button = document.querySelector(`.${color}`);
+        button.style.opacity = '1';
+        setTimeout(() => {
+            button.style.opacity = '0.8';
+        }, 500);
+    }
+
+    document.querySelectorAll('.button').forEach(button => {
+        button.addEventListener('click', () => {
+            if (!gameStarted) return;
+            const color = button.classList[1];
+            userSequence.push(color);
+            flashButton(color);
+            checkSequence(userSequence.length - 1);
+        });
+    });
+
+    function checkSequence(index) {
+        if (userSequence[index] !== sequence[index]) {
+            message.textContent = 'Errou! Tente novamente.';
+            gameStarted = false;
+            return;
+        }
+        if (userSequence.length === sequence.length) {
+            setTimeout(nextLevel, 1000);
+        }
+    }
+        // Exibir o nome do jogador
+        const username = localStorage.getItem('username');
+        const userId = localStorage.getItem('user_id'); // Assumindo que o ID foi salvo após o login
+
+        if (username) {
+            document.getElementById('welcome-message').textContent = `Bem-vindo, ${username}!`;
+        } else {
+            document.getElementById('welcome-message').textContent = 'Bem-vindo!';
+        }
+
+        // Função para buscar e exibir o ranking
+        async function loadRanking() {
+    try {
+        const response = await fetch('http://localhost:3000/ranking');
+        if (!response.ok) {
+            throw new Error('Erro ao buscar o ranking');
+        }
+        const ranking = await response.json();
+
+        const rankingTable = document.getElementById('ranking-table').getElementsByTagName('tbody')[0];
+        rankingTable.innerHTML = ''; // Limpa a tabela
+
+        ranking.forEach((player) => {
+            const row = rankingTable.insertRow();
+            const cellName = row.insertCell(0);
+            const cellScore = row.insertCell(1);
+            cellName.textContent = player.username;
+            cellScore.textContent = player.max_score;
+        });
+    } catch (error) {
+        console.error('Erro ao carregar o ranking:', error);
+    }
+}
+
+
+        // Função para enviar o score do jogador após o jogo
+        async function submitScore(score) {
+            if (!userId) return;
+
+            const response = await fetch('http://localhost:3000/submit_score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId, score })
+            });
+
+            if (response.ok) {
+                alert('Score enviado com sucesso!');
+                loadRanking(); // Atualiza o ranking após enviar o score
+            } else {
+                alert('Falha ao enviar o score.');
+            }
+        }
+
+        // Simulação de enviar score ao terminar o jogo
+        document.getElementById('start').addEventListener('click', () => {
+            const score = Math.floor(Math.random() * 100); // Exemplo de score
+            submitScore(score);
+        });
+
+        // Carregar o ranking ao iniciar a página
+        window.onload = loadRanking;
+    </script>
+</body>
+</html>

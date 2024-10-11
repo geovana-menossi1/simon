@@ -1,0 +1,91 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #282c34;
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    margin: 0;
+}
+
+.container {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 20px; /* Borda arredondada */
+    padding: 20px;
+    background-color: #3a3f47; /* Cor de fundo do container */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra para profundidade */
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Colunas ocupando igual espaço */
+    gap: 15px; /* Sem espaço entre os botões */
+    margin: 0 auto; /* Centraliza o grid */
+    justify-items: center; /* Centraliza os itens no eixo horizontal */
+    align-items: center; /* Centraliza os itens no eixo vertical */
+    margin-bottom: 20px;
+}
+
+.button {
+    width: 60%; /* Botões ocupando toda a largura da coluna */
+    height: 100px;
+    border-radius: 20px; /* Borda arredondada nos botões */
+    opacity: 0.8;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.3s, transform 0.3s; /* Transição suave */
+}
+.button:hover {
+    opacity: 1;
+    transform: scale(1.1); /* Efeito de aumento ao passar o mouse */
+}
+
+.red {
+    position: relative;
+    left: 35px;
+    background-color: #e74c3c; /* Vermelho */
+}
+
+.blue {
+    position: relative;
+    right: 35px;
+    background-color: #3498db; /* Azul */
+}
+
+.green {
+    position: relative;
+    left: 35px;
+    background-color: #2ecc71; /* Verde */
+}
+
+.yellow {
+    position: relative;
+    right: 35px;
+    background-color: #f1c40f; /* Amarelo */
+}
+
+#start {
+    padding: 10px 20px;
+    background-color: #61dafb;
+    border: none;
+    border-radius: 10px; /* Borda arredondada */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Transição suave */
+}
+
+#start:hover {
+    background-color: #21a1f1;
+    transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro e Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 100vh;
+    background-color: #f7f9fc;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    max-width: 90%;
+    border-radius: 20px;
+    height: 450px;
+    overflow: hidden;
+    padding: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-panel, .signup-panel {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #2ecc71; /* Verde para o painel de login */
+    color: white;
+    width: 800px;
+}
+
+.signup-panel {
+    background-color: #3498db; /* Azul para o painel de cadastro */
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+p {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+input {
+    width: 90%;
+    padding: 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.button {
+    width: 50%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: #27ae60; /* Verde escuro para o botão */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.button:hover {
+    background-color: #219653; /* Verde mais escuro ao passar o mouse */
+    transform: scale(1.05); /* Efeito de aumento ao passar o mouse */
+}
+form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+</style>
+<body>
+    <div class="container">
+        <!-- Painel de Login -->
+        <div class="login-panel">
+            <h1>Bem-vindo de volta!</h1>
+            <p>Por favor, faça login com suas informações pessoais.</p>
+            <form id="login-form"> <!-- Corrigido o ID do formulário -->
+                <input type="text" id="login-username" placeholder="Nome de usuário" required> <!-- Corrigido o ID -->
+                <input type="password" id="login-password" placeholder="Senha" required> <!-- Corrigido o ID -->
+                <button type="submit" class="button">SIGN IN</button>
+            </form>
+            <div id="login-message"></div>
+        </div>
+
+        <!-- Painel de Cadastro -->
+        <div class="signup-panel">
+            <h1>Criar Conta</h1>
+            <p>Ou use seu email para registro:</p>
+            <form id="signup-form"> <!-- Corrigido o ID do formulário -->
+                <input type="text" id="signup-username" placeholder="Nome de usuário" required> <!-- Corrigido o ID -->
+                <input type="email" id="signup-email" placeholder="Email" required> <!-- Corrigido o ID -->
+                <input type="password" id="signup-password" placeholder="Senha" required> <!-- Corrigido o ID -->
+                <button type="submit" class="button">SIGN UP</button>
+            </form>
+            <div id="signup-message"></div>
+        </div>
+    </div>
+
+    <script>
+        // Cadastro
+        document.getElementById('signup-form').addEventListener('submit', async (e) => { // Corrigido o ID do formulário
+            e.preventDefault();
+            const username = document.getElementById('signup-username').value; // Corrigido o ID do input
+            const email = document.getElementById('signup-email').value; // Adicionado campo de email
+            const password = document.getElementById('signup-password').value; // Corrigido o ID do input
+
+            const response = await fetch('http://localhost:3000/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, email, password }) // Adicionado campo de email
+            });
+
+            const data = await response.text();
+            alert(data);
+        });
+
+        // Login
+        document.getElementById('login-form').addEventListener('submit', async (e) => { // Corrigido o ID do formulário
+            e.preventDefault();
+            const username = document.getElementById('login-username').value; // Corrigido o ID do input
+            const password = document.getElementById('login-password').value; // Corrigido o ID do input
+
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.text();
+
+            if (response.ok) {
+                // Armazena o nome do usuário no localStorage
+                localStorage.setItem('username', username);
+
+                // Redireciona para a página simon.html
+                window.location.href = '/simon';
+            }
+        });
+    </script>
+</body>
+</html>
